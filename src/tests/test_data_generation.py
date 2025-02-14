@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from airdrop.src.config import INITIAL_TOKENS
-from airdrop.src.data_generation import generate_user_data
+from config import INITIAL_TOKENS
+from data_generation import generate_user_data
 
 def test_generate_user_data_uniform():
     num_users = 100

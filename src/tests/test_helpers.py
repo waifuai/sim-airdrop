@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from airdrop.src.helpers import calculate_buy_sell_probabilities, dynamic_vesting
-from airdrop.src.config import INITIAL_PRICE
+from helpers import calculate_buy_sell_probabilities, dynamic_vesting
+from config import INITIAL_PRICE
 
 def test_calculate_buy_sell_probabilities():
     num_users = 10

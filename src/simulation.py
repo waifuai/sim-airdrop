@@ -1,8 +1,8 @@
 import numpy as np
 from typing import Tuple, Dict, Any
 
-from airdrop.src.config import SIMULATION_STEPS, INITIAL_PRICE, INITIAL_TOKENS
-from airdrop.src.helpers import dynamic_vesting, calculate_buy_sell_probabilities
+from config import SIMULATION_STEPS, INITIAL_PRICE, INITIAL_TOKENS
+from helpers import dynamic_vesting, calculate_buy_sell_probabilities
 
 # --- Simulation Step ---
 def _calculate_trade_volumes(holdings: np.ndarray, buy_probability: np.ndarray, sell_probability: np.ndarray, price: float, total_supply: float) -> Tuple[np.ndarray, np.ndarray]:
@@ -103,8 +103,8 @@ def run_simulation(params: Dict[str, Any]) -> Tuple[List[float], float, List[flo
     Returns:
         Tuple[List[float], float, List[float]]: A tuple containing the price history, final total supply, and market sentiment history.
     """
-    from airdrop.src.data_prep import assign_user_parameters
-    from airdrop.src.data_generation import generate_user_data
+    from data_prep import assign_user_parameters
+    from data_generation import generate_user_data
 
     num_users = params.get('num_users', 100)
     simulation_steps = params.get('simulation_steps', 100)

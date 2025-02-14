@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from airdrop.src.simulation import simulate_step, run_simulation
-from airdrop.src.config import INITIAL_TOKENS, SIMULATION_STEPS, INITIAL_PRICE
+from simulation import simulate_step, run_simulation
+from config import INITIAL_TOKENS, SIMULATION_STEPS, INITIAL_PRICE
 
 def test_simulate_step():
     num_users = 10
