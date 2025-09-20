@@ -3,7 +3,7 @@ from config import INITIAL_TOKENS
 from typing import Tuple, Dict, Any
 
 # --- Data Generation ---
-def generate_user_data(num_users: int, airdrop_strategy: Dict[str, Any], user_params: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray]:
+def generate_user_data(num_users: int, airdrop_strategy: Dict[str, Any], user_params: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Generates user data including initial holdings, activity, and airdrop distribution.
 
@@ -46,9 +46,10 @@ def generate_user_data(num_users: int, airdrop_strategy: Dict[str, Any], user_pa
     else:
         eligibility = np.zeros(num_users)
 
+    total_eligibility = np.sum(eligibility)
     airdrop_distribution = np.where(
       eligibility > 0,
-      airdrop_amount * eligibility / np.sum(eligibility),
+      airdrop_amount * eligibility / (total_eligibility + 1e-8),  # Add small epsilon to avoid division by zero
       0.0
     )
 

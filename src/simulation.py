@@ -1,8 +1,9 @@
 import numpy as np
-from typing import Tuple, Dict, Any
+from typing import Tuple, Dict, Any, List
 
 from config import SIMULATION_STEPS, INITIAL_PRICE, INITIAL_TOKENS
 from helpers import dynamic_vesting, calculate_buy_sell_probabilities
+from validation import validate_simulation_params, ValidationError
 
 # --- Simulation Step ---
 def _calculate_trade_volumes(holdings: np.ndarray, buy_probability: np.ndarray, sell_probability: np.ndarray, price: float, total_supply: float) -> Tuple[np.ndarray, np.ndarray]:
@@ -35,20 +36,17 @@ def simulate_step(step: int, holdings: np.ndarray, buy_probability: np.ndarray, 
         airdrop_per_user (np.ndarray): An array of airdrop amounts per user.
         user_activity (np.ndarray): An array of user activity levels.
         user_params (np.ndarray): An array of user parameters.
-        params (Dict[str, Any]): Dictionary of simulation parameters.
+        params (Dict[str, Any]): Dictionary of simulation parameters including airdrop strategy.
 
     Returns:
         Dict[str, Any]: A dictionary containing the new holdings, new price, new total supply, and updated user activity.
     """
-    vesting = params.get("vesting", "none")
-    vesting_periods = params.get("vesting_periods", 1)
-    price_threshold = params.get("price_threshold", 0.015)
-    activity_threshold = params.get("activity_threshold", 50)
+    airdrop_strategy = params.get("airdrop_strategy", {"type": "none", "percentage": 0.1, "vesting": "none"})
     initial_price = params.get("initial_price", 0.10)
     initial_tokens = params.get("initial_tokens", 1_000_000_000)
 
-    if vesting != "none":
-        holdings = dynamic_vesting(holdings, airdrop_per_user, price, {"vesting": vesting, "vesting_periods": vesting_periods, "price_threshold": price_threshold, "activity_threshold": activity_threshold}, step, user_activity)
+    if airdrop_strategy.get("vesting", "none") != "none":
+        holdings = dynamic_vesting(holdings, airdrop_per_user, price, airdrop_strategy, step, user_activity)
 
     buy_amount, sell_amount = _calculate_trade_volumes(holdings, buy_probability, sell_probability, price, total_supply)
 
@@ -98,60 +96,66 @@ def run_simulation(params: Dict[str, Any]) -> Tuple[List[float], float, List[flo
     Runs the airdrop simulation.
 
     Args:
-        airdrop_strategy (Dict[str, Any]): A dictionary defining the airdrop strategy.
+        params (Dict[str, Any]): A dictionary containing simulation parameters including airdrop strategy.
 
     Returns:
         Tuple[List[float], float, List[float]]: A tuple containing the price history, final total supply, and market sentiment history.
+
+    Raises:
+        ValidationError: If the parameters are invalid or simulation fails.
     """
-    from data_prep import assign_user_parameters
-    from data_generation import generate_user_data
+    try:
+        validate_simulation_params(params)
 
-    num_users = params.get('num_users', 100)
-    simulation_steps = params.get('simulation_steps', 100)
-    initial_tokens = params.get('initial_tokens', 1_000_000_000)
-    initial_price = params.get('initial_price', 0.10)
-    market_sentiment = params.get('market_sentiment', 0.0)
-    airdrop_strategy = params.get('airdrop_strategy', {"type": "none", "percentage": 0.1, "vesting": "none"})
+        from data_prep import assign_user_parameters
+        from data_generation import generate_user_data
 
-    user_params = assign_user_parameters(num_users)
-    airdrop_distribution, user_activity = generate_user_data(num_users, airdrop_strategy, user_params)
+        num_users = params.get('num_users', 100)
+        simulation_steps = params.get('simulation_steps', 100)
+        initial_tokens = params.get('initial_tokens', 1_000_000_000)
+        initial_price = params.get('initial_price', 0.10)
+        market_sentiment = params.get('market_sentiment', 0.0)
+        airdrop_strategy = params.get('airdrop_strategy', {"type": "none", "percentage": 0.1, "vesting": "none"})
 
-    holdings = np.copy(airdrop_distribution)
-    total_supply = float(initial_tokens)
-    price = float(initial_price)
+        user_params = assign_user_parameters(num_users)
+        airdrop_distribution, user_activity = generate_user_data(num_users, airdrop_strategy, user_params)
 
-    airdrop_per_user = np.copy(airdrop_distribution)
+        holdings = np.copy(airdrop_distribution)
+        total_supply = float(initial_tokens)
+        price = float(initial_price)
 
-    price_history: List[float] = []
-    market_sentiment_history: List[float] = []
-    initial_market_sentiment = float(market_sentiment)
+        airdrop_per_user = np.copy(airdrop_distribution)
 
-    for step in range(simulation_steps):
-        buy_probability, sell_probability = calculate_buy_sell_probabilities(user_params, price, initial_price, initial_market_sentiment, airdrop_strategy, holdings, step)
-        step_results = simulate_step(step, holdings, buy_probability, sell_probability, total_supply, price, airdrop_per_user, user_activity, user_params, params)
-        holdings = step_results["holdings"]
-        price = step_results["price"]
-        total_supply = step_results["total_supply"]
-        user_activity = step_results["user_activity"]
+        price_history: List[float] = []
+        market_sentiment_history: List[float] = []
+        initial_market_sentiment = float(market_sentiment)
 
-        if step % 1024 == 0:
-            price_history.append(price)
-            market_sentiment_history.append(initial_market_sentiment)
+        for step in range(simulation_steps):
+            buy_probability, sell_probability = calculate_buy_sell_probabilities(user_params, price, initial_price, initial_market_sentiment, airdrop_strategy, holdings, step)
+            step_results = simulate_step(step, holdings, buy_probability, sell_probability, total_supply, price, airdrop_per_user, user_activity, user_params, params)
+            holdings = step_results["holdings"]
+            price = step_results["price"]
+            total_supply = step_results["total_supply"]
+            user_activity = step_results["user_activity"]
 
-        # Add price/supply impact on sentiment
-        price_change = (price - initial_price) / initial_price
-        supply_change = (total_supply - initial_tokens) / initial_tokens
+            if step % 1024 == 0:
+                price_history.append(price)
+                market_sentiment_history.append(initial_market_sentiment)
 
-        sentiment_change = (
-            0.4 * price_change +
-            0.2 * -supply_change +
-            np.random.normal(0, 0.01)
-        )
-        new_market_sentiment = np.clip(initial_market_sentiment + sentiment_change, -1, 1)
+            # Add price/supply impact on sentiment
+            price_change = (price - initial_price) / initial_price
+            supply_change = (total_supply - initial_tokens) / initial_tokens
 
-        market_sentiment_change = np.random.normal(scale=0.01)
-        new_market_sentiment = initial_market_sentiment + market_sentiment_change
-        new_market_sentiment = np.clip(new_market_sentiment, -0.5, 0.5)
-        initial_market_sentiment = new_market_sentiment
+            sentiment_change = (
+                0.4 * price_change +
+                0.2 * -supply_change +
+                np.random.normal(0, 0.01)
+            )
+            new_market_sentiment = initial_market_sentiment + sentiment_change
+            new_market_sentiment = np.clip(new_market_sentiment, -0.5, 0.5)
+            initial_market_sentiment = new_market_sentiment
 
-    return price_history, total_supply, market_sentiment_history
+        return price_history, total_supply, market_sentiment_history
+
+    except Exception as e:
+        raise ValidationError(f"Error in run_simulation: {str(e)}")
