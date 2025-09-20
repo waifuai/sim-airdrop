@@ -1,3 +1,18 @@
+"""
+Data preparation module for the airdrop simulation system.
+
+This module handles the preparation and assignment of user parameters based on predefined
+user archetypes. It converts archetype definitions into numerical arrays and assigns
+users to archetypes according to realistic distribution patterns.
+
+Key functions:
+- assign_user_parameters(): Assigns behavioral parameters to users based on archetype distribution
+- get_archetype_distribution(): Returns the current user archetype distribution
+
+The module adds realistic noise to user parameters to simulate individual variations
+while maintaining the core characteristics of each archetype.
+"""
+
 import numpy as np
 from config import USER_ARCHETYPES, USER_DISTRIBUTION
 from typing import Dict, Any

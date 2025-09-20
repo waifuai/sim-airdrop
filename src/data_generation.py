@@ -1,3 +1,18 @@
+"""
+Data generation module for the airdrop simulation system.
+
+This module handles the creation of user data including initial token holdings, user activity levels,
+and airdrop distribution calculations. It supports multiple airdrop strategies:
+
+- None: No airdrop distribution
+- Uniform: Equal distribution to all users
+- Tiered: Distribution based on user criteria (holdings or activity) with thresholds and weights
+- Lottery: Random distribution to a subset of users
+
+The main function generate_user_data() creates realistic user profiles and calculates
+appropriate airdrop amounts based on the specified strategy parameters.
+"""
+
 import numpy as np
 from config import INITIAL_TOKENS
 from typing import Tuple, Dict, Any

@@ -1,3 +1,17 @@
+"""
+Helper functions module for the airdrop simulation system.
+
+This module contains utility functions that support the core simulation logic:
+
+- calculate_buy_sell_probabilities(): Calculates user trading probabilities based on various factors
+  including price sensitivity, market sentiment, network effects, and market cycles
+- dynamic_vesting(): Handles different vesting mechanisms (linear, dynamic_price, dynamic_activity)
+  with proper tracking of vested amounts over time
+
+The functions include robust error handling and validation to ensure simulation stability
+and realistic behavior modeling.
+"""
+
 import numpy as np
 from config import INITIAL_PRICE, SIMULATION_STEPS, INITIAL_TOKENS, MARKET_CYCLES
 from typing import Tuple, Dict, Any

@@ -1,3 +1,21 @@
+"""
+Configuration file for the airdrop simulation system.
+
+This module contains all the configurable parameters and constants used throughout the simulation,
+including model parameters, market parameters, user archetypes with their behavioral characteristics,
+network effects parameters, and logging configuration.
+
+The configuration is organized into sections:
+- Model Parameters: Basic simulation settings like token count, price, user count
+- Market Parameters: Market dynamics including liquidity, gas fees, burn rates
+- Market Cycles: Parameters defining market phase durations and volatility
+- User Archetypes: Different user types with their trading probabilities and behaviors
+- User Distribution: How users are distributed across different archetypes
+- Network Effects: Parameters affecting user behavior based on network size
+- Vesting Parameters: Configuration for token vesting mechanisms
+- Logging Configuration: Settings for logging output and formatting
+"""
+
 import numpy as np
 from typing import Dict, Any
 

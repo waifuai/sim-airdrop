@@ -1,3 +1,19 @@
+"""
+Main execution module for the airdrop simulation system.
+
+This module serves as the entry point for running airdrop simulations. It handles:
+
+- Command line argument parsing for simulation parameters
+- Generation of multiple airdrop strategies from parameter grids
+- Execution of simulations for each strategy
+- Results collection, analysis, and CSV export
+- Generation of comprehensive visualization reports
+- Identification and display of the best performing strategy
+
+The module includes robust error handling and logging to ensure reliable execution
+and provides detailed output about simulation progress and results.
+"""
+
 import argparse
 import time
 import pandas as pd

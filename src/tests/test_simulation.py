@@ -1,3 +1,17 @@
+"""
+Test suite for the simulation module.
+
+This module contains unit tests for the core simulation functionality:
+
+- test_simulate_step(): Tests a single simulation step to ensure proper handling
+  of trades, price impact, token burning, and whale detection
+- test_run_simulation(): Tests the complete simulation run to verify that
+  price history is recorded correctly and token supply decreases over time
+
+These tests validate the core simulation mechanics and ensure that market
+dynamics behave as expected under different conditions.
+"""
+
 import pytest
 import numpy as np
 from simulation import simulate_step, run_simulation

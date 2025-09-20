@@ -1,3 +1,17 @@
+"""
+Airdrop strategy generation module for the simulation system.
+
+This module handles the creation and management of different airdrop strategies:
+
+- AIRDROP_PARAMETER_GRID: Comprehensive parameter grid defining all possible strategy combinations
+  including distribution types (lottery, uniform, tiered), vesting mechanisms, criteria, thresholds, and weights
+- generate_airdrop_strategies(): Main function that creates strategy combinations from the parameter grid,
+  handles special cases for tiered strategies, validates parameter combinations, and assigns unique names
+
+The module supports complex strategy generation with proper validation to ensure only valid
+strategy combinations are created for simulation.
+"""
+
 import itertools
 import random
 from typing import Dict, Any, List

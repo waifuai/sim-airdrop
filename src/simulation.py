@@ -1,3 +1,18 @@
+"""
+Core simulation module for the airdrop simulation system.
+
+This module contains the core simulation logic that models token trading behavior:
+
+- simulate_step(): Simulates a single step of the market, handling trades, price impact,
+  token burning, user activity evolution, and whale detection
+- run_simulation(): Main simulation loop that orchestrates the entire simulation process
+  over multiple steps, integrating data generation, probability calculations, and step-by-step
+  market evolution
+
+The simulation includes realistic market mechanics such as gas fees, liquidity pools,
+price impact calculations, and dynamic user behavior adaptation.
+"""
+
 import numpy as np
 from typing import Tuple, Dict, Any, List
 

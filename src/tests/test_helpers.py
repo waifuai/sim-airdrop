@@ -1,3 +1,17 @@
+"""
+Test suite for the helper functions module.
+
+This module contains unit tests for the core helper functions:
+
+- test_calculate_buy_sell_probabilities(): Tests the probability calculation function
+  ensuring that buy and sell probabilities are properly bounded between 0 and 1
+- test_dynamic_vesting_linear(): Tests the linear vesting mechanism to ensure
+  tokens are properly vested at the correct intervals
+
+These tests validate the mathematical correctness and boundary conditions of
+the helper functions used throughout the simulation.
+"""
+
 import pytest
 import numpy as np
 from helpers import calculate_buy_sell_probabilities, dynamic_vesting

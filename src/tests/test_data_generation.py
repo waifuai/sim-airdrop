@@ -1,3 +1,16 @@
+"""
+Test suite for the data generation module.
+
+This module contains unit tests for the data generation functionality, specifically testing:
+
+- test_generate_user_data_uniform(): Tests uniform airdrop distribution where all users
+  receive equal token amounts based on the airdrop percentage
+- test_generate_user_data_none(): Tests the case where no airdrop distribution occurs
+
+These tests ensure that the generate_user_data() function correctly handles different
+airdrop strategies and produces expected token distributions.
+"""
+
 import pytest
 import numpy as np
 from config import INITIAL_TOKENS
